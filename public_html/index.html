@@ -4,17 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather</title>
+    <script>
+        city_name = '';
+        state_name = '';
+        const states = [{"state":"Alabama","code":"AL"},{"state":"Alaska","code":"AK"},{"state":"Arizona","code":"AZ"},{"state":"Arkansas","code":"AR"},{"state":"California","code":"CA"},{"state":"Colorado","code":"CO"},{"state":"Connecticut","code":"CT"},{"state":"Delaware","code":"DE"},{"state":"Florida","code":"FL"},{"state":"Georgia","code":"GA"},{"state":"Hawaii","code":"HI"},{"state":"Idaho","code":"ID"},{"state":"Illinois","code":"IL"},{"state":"Indiana","code":"IN"},{"state":"Iowa","code":"IA"},{"state":"Kansas","code":"KS"},{"state":"Kentucky","code":"KY"},{"state":"Louisiana","code":"LA"},{"state":"Maine","code":"ME"},{"state":"Maryland","code":"MD"},{"state":"Massachusetts","code":"MA"},{"state":"Minnesota","code":"MN"},{"state":"Michigan","code":"MI"},{"state":"Mississippi","code":"MS"},{"state":"Missouri","code":"MO"},{"state":"Montana","code":"MT"},{"state":"Nebraska","code":"NE"},{"state":"Nevada","code":"NV"},{"state":"New Hampshire","code":"NH"},{"state":"New Jersey","code":"NJ"},{"state":"New Mexico","code":"NM"},{"state":"New York","code":"NY"},{"state":"North Carolina","code":"NC"},{"state":"North Dakota","code":"ND"},{"state":"Ohio","code":"OH"},{"state":"Oklahoma","code":"OK"},{"state":"Oregon","code":"OR"},{"state":"Pennsylvania","code":"PA"},{"state":"Rhode Island","code":"RI"},{"state":"South Carolina","code":"SC"},{"state":"South Dakota","code":"SD"},{"state":"Tennessee","code":"TN"},{"state":"Texas","code":"TX"},{"state":"Utah","code":"UT"},{"state":"Vermont","code":"VT"},{"state":"Virginia","code":"VA"},{"state":"Washington","code":"WA"},{"state":"West Virginia","code":"WV"},{"state":"Wisconsin","code":"WI"},{"state":"Wyoming","code":"WY"}];
+        let weatherAPI = "http://api.openweathermap.org/data/2.5/weather?q=" 
+        let weatherAPI2= ",";
+        let weatherAPI3= "&appid=535be213fdcf763e89d240996dbf2139";
+        
+        function reset(){
+            var select = document.getElementById("cities");
+            console.log(select.length);
+            while(select.length>0){
+                select.remove(0);
+            }
+            list_cities();
+        }
+
+        function list_states() {
+            var select = document.getElementById("states");
+            for (var i = 0; i < states.length - 1; i++) {
+                select.options[i] = new Option(states[i].state, states[i].code);
+            }
+        }
+    
+        function list_cities() {
+            state_name = document.getElementById("states").value;
+            state_name = 
+            //state_name = "Iowa"
+            document.getElementById("city").style.visibility = "visible";
+            var select = document.getElementById("cities");
+            var value = document.getElementById("states").value;
+            console.log(document.getElementById("states"));
+            let selected_state = 'cities/' + value + ".json";
+            console.log(selected_state);
+            fetch(selected_state)
+            .then(response => response.json())
+            .then(response => {
+               console.log(response)
+               for (var i = 0; i < response.length - 1; i++) {
+                select.options[i] = new Option(response[i].city, response[i].city);
+            }
+            })
+            .catch(err =>{ console.log(err)
+                //break;
+           }
+           ); 
+        }
+
+        function get_weather(){
+            city_name = document.getElementById("cities").value;
+            document.getElementById("weather").style.visibility = "visible";
+            let API = weatherAPI + city_name + weatherAPI2 + state_name + weatherAPI3;
+            //let API = 'http://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=535be213fdcf763e89d240996dbf2139';
+            console.log(state_name);
+            console.log(city_name);
+            console.log(API);
+            
+            fetch(API)
+            .then(response => response.json())
+            .then(response => {
+               console.log(response)
+            })
+            .catch(err =>{ console.log(err)
+                //break;
+           }
+           ); 
+           
+        }
+
+    
+    </script>
     <style>
         #city, #weather {visibility: hidden;}
     </style>
 </head>
-<body>
+<body onload="list_states()">
     <h1>Weather</h1>
     <div id="state">
-        <h2>Pick a State: </h2>
+        <label for="states">Pick a State:</label>
+          <select id="states" onchange="reset()">
+          </select>
     </div>
     <div id="city">
-        <h2>Pick a City: </h2>
+        <label for="cities">Pick a City:</label>
+          <select id="cities" onchange="get_weather()">
+          </select>
     </div>
     <div id="weather">
         <h2>Current weather conditions</h2>
