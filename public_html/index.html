@@ -14,7 +14,6 @@
         
         function reset(){
             var select = document.getElementById("cities");
-            console.log(select.length);
             while(select.length>0){
                 select.remove(0);
             }
@@ -27,21 +26,30 @@
                 select.options[i] = new Option(states[i].state, states[i].code);
             }
         }
+        
+        function get_full_state_name(abv_state){
+            var select = document.getElementById("states");
+            for (var i = 0; i < states.length - 1; i++) {
+                if(states[i].code == abv_state){
+                    return states[i].state;
+                }
+            }
+        }
     
         function list_cities() {
-            state_name = document.getElementById("states").value;
-            state_name = 
+            state_name = get_full_state_name(document.getElementById("states").value);
+            console.log(state_name);
             //state_name = "Iowa"
             document.getElementById("city").style.visibility = "visible";
             var select = document.getElementById("cities");
             var value = document.getElementById("states").value;
-            console.log(document.getElementById("states"));
+            
             let selected_state = 'cities/' + value + ".json";
-            console.log(selected_state);
+            
             fetch(selected_state)
             .then(response => response.json())
             .then(response => {
-               console.log(response)
+               
                for (var i = 0; i < response.length - 1; i++) {
                 select.options[i] = new Option(response[i].city, response[i].city);
             }
@@ -51,20 +59,122 @@
            }
            ); 
         }
+        
+        function convert_c(k){
+            let c = k - 273.15;
+            let return_value = parseInt(c) + " °C";
+            return return_value;
+        }
+        function convert_f(k){
+            let f = k * 9/5 - 459.67;
+            let return_value = parseInt(f) + " °F";
+            return return_value;
+        }
+        function convert_deg(deg){
+            let return_value = '';            
+                if (deg >= 0 && deg < 11){
+                    return_value = 'N';
+                    return return_value;
+                }
+                else if (deg >= 11 && deg < 33){
+                    return_value = 'NNE';
+                    return return_value;
+                }
+                else if (deg >= 33 && deg < 56){
+                    return_value = 'NE';
+                    return return_value;
+                }
+                else if (deg >= 56 && deg < 78){
+                    return_value = 'ENE';
+                    return return_value;
+                }
+                else if (deg >= 78 && deg < 101){
+                    return_value = 'E';
+                    return return_value;
+                }
+                else if (deg >= 101 && deg < 123){
+                    return_value = 'ESE';
+                    return return_value;
+                }
+                else if (deg >= 123 && deg < 146){
+                    return_value = 'SE';
+                    return return_value;
+                }
+                else if (deg >= 146 && deg < 168){
+                    return_value = 'SSE';
+                    return return_value;
+                }
+                else if (deg >= 168 && deg < 191){
+                    return_value = 'S';
+                    return return_value;
+                }
+                else if (deg >= 191 && deg < 213){
+                    return_value = 'SSW';
+                    return return_value;
+                }
+                else if (deg >= 213 && deg < 236){
+                    return_value = 'SW';
+                    return return_value;
+                }
+                else if (deg >= 236 && deg < 258){
+                    return_value = 'WSW';
+                    return return_value;
+                }
+                else if (deg >= 258 && deg < 281){
+                    return_value = 'W';
+                    return return_value;
+                }
+                else if (deg >= 281 && deg < 303){
+                    return_value = 'WNW';
+                    return return_value;
+                }
+                else if (deg >= 303 && deg < 326){
+                    return_value = 'NW';
+                    return return_value;
+                }
+                else if (deg >= 326 && deg < 348){
+                    return_value = 'NNW';
+                    return return_value;
+                }
+                else if (deg >= 348){
+                    return_value = 'N';
+                    return return_value;
+                }
+        }
 
         function get_weather(){
             city_name = document.getElementById("cities").value;
-            document.getElementById("weather").style.visibility = "visible";
+            document.getElementById("weather_div").style.visibility = "visible";
             let API = weatherAPI + city_name + weatherAPI2 + state_name + weatherAPI3;
-            //let API = 'http://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=535be213fdcf763e89d240996dbf2139';
             console.log(state_name);
             console.log(city_name);
             console.log(API);
             
             fetch(API)
             .then(response => response.json())
-            .then(response => {
-               console.log(response)
+            .then(json => {
+               console.log(json)
+               let weather_location = document.getElementById("weather_city");
+               weather_location.innerHTML = json.name;
+               let weather_locationState = document.getElementById("weather_state");
+               weather_locationState.innerHTML = state_name;
+               let weather_locationWeather = document.getElementById("weather_weather");
+               weather_locationWeather.innerHTML = json.weather[0].main;
+               let weather_locationWeatherDesc = document.getElementById("weather_desc");
+               weather_locationWeatherDesc.innerHTML = json.weather[0].description;
+               let weather_temp = document.getElementById("weather_temp");
+               weather_temp.innerHTML = convert_f(json.main.temp) +"  "+ convert_c(json.main.temp);
+               let weather_feels = document.getElementById("weather_feels");
+               weather_feels.innerHTML =  convert_f(json.main.feels_like) +"  "+ convert_c(json.main.feels_like);
+               let weather_high = document.getElementById("weather_high");
+               weather_high.innerHTML = convert_f(json.main.temp_max) +"  "+ convert_c(json.main.temp_max);
+               let weather_low = document.getElementById("weather_low");
+               weather_low.innerHTML = convert_f(json.main.temp_min) +"  "+ convert_c(json.main.temp_min);
+               let weather_lat_long = document.getElementById("weather_lat_long");
+               weather_lat_long.innerHTML = " (" + json.coord.lat + ") (" + json.coord.lon + ")";
+               let weather_wind = document.getElementById("weather_wind");
+               weather_wind.innerHTML = json.wind.speed + "  " + convert_deg(json.wind.deg);
+               
             })
             .catch(err =>{ console.log(err)
                 //break;
@@ -76,7 +186,7 @@
     
     </script>
     <style>
-        #city, #weather {visibility: hidden;}
+        #city, #weather_div {visibility: hidden;}
     </style>
 </head>
 <body onload="list_states()">
@@ -91,8 +201,53 @@
           <select id="cities" onchange="get_weather()">
           </select>
     </div>
-    <div id="weather">
+    <div id="weather_div">
         <h2>Current weather conditions</h2>
+
+        <div id="weather_info">
+            <table>
+                <tr>
+                    <td>State: </td>
+                    <td id="weather_state"></td>
+                </tr>
+                <tr>
+                    <td>City: </td>
+                    <td id="weather_city"></td>
+                </tr>
+                <tr>
+                    <td>Lat and Long: </td>
+                    <td id="weather_lat_long"></td>
+                </tr>
+                <tr>
+                    <td>Weather: </td>
+                    <td id="weather_weather"></td>
+                </tr>
+                <tr>
+                    <td>Description: </td>
+                    <td id="weather_desc"></td>
+                </tr>
+                <tr>
+                    <td>Temp: </td>
+                    <td id="weather_temp"></td>
+                </tr>
+                    <td>Feels Like: </td>
+                    <td id="weather_feels"></td>
+                </tr>
+                <tr>
+                    <td>High: </td>
+                    <td id="weather_high"></td>
+                </tr>
+                <tr>
+                    <td>Low: </td>
+                    <td id="weather_low"></td>
+                </tr>
+                <tr>
+                    <td>Wind: </td>
+                    <td id="weather_wind"></td>
+                </tr>
+            </table>
+
+        </div>
     </div>
 </body>
 </html>
