@@ -11,6 +11,7 @@
         let weatherAPI = "http://api.openweathermap.org/data/2.5/weather?q=" 
         let weatherAPI2= ",";
         let weatherAPI3= "&appid=535be213fdcf763e89d240996dbf2139";
+        let latlonAPI = "http://api.openweathermap.org/data/2.5/weather?lat=39.76&lon=-94.85&appid=535be213fdcf763e89d240996dbf2139"
         
         function reset(){
             var select = document.getElementById("cities");
@@ -19,14 +20,12 @@
             }
             list_cities();
         }
-
         function list_states() {
             var select = document.getElementById("states");
             for (var i = 0; i < states.length - 1; i++) {
                 select.options[i] = new Option(states[i].state, states[i].code);
             }
-        }
-        
+        }     
         function get_full_state_name(abv_state){
             var select = document.getElementById("states");
             for (var i = 0; i < states.length - 1; i++) {
@@ -35,7 +34,6 @@
                 }
             }
         }
-    
         function list_cities() {
             state_name = get_full_state_name(document.getElementById("states").value);
             console.log(state_name);
@@ -59,7 +57,6 @@
            }
            ); 
         }
-        
         function convert_c(k){
             let c = k - 273.15;
             let return_value = parseInt(c) + " °C";
